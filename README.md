@@ -106,6 +106,24 @@ MCP-capable adapter or extension, such as
 
 Restart the selected client after the wizard finishes so it reloads the MCP.
 
+### Authorize app endpoints
+
+`get_account` and `get_content` use Dream MS app authorization. The local MCP
+does not grant OAuth access; Dream MS checks the registered app, API key, and
+the Discord account's approved scope.
+
+1. In Dream MS, open **Developer → My App** and register your app/bot.
+2. Use the app's authorization flow and approve `characters:read` for
+   `get_account` and/or `content:read` for `get_content`.
+3. In the setup wizard, enter the Discord ID of the account that authorized
+   the app, then configure the MCP with your Dream MS API key.
+4. Restart your coding agent and call the account or content tool again.
+
+If the API returns `404 No authorized data`, check that the Discord ID belongs
+to the authorizing account and that the requested scope was approved. See the
+[Dream MS app endpoint documentation](https://dreamms.gg/api/docs) for the
+current registration and scope requirements.
+
 ## Available tools
 
 The MCP tool names mirror the API resources below. All tools are read-only and return the corresponding JSON data. Required parameters are marked **required**.

@@ -59,6 +59,22 @@ $env:DREAM_DISCORD_ID = "your-discord-user-id"
 set DREAM_DISCORD_ID=your-discord-user-id
 ```
 
+## Authorize app endpoints
+
+The local MCP cannot grant OAuth access. Dream MS authorizes these requests by
+checking your registered app, API key, Discord ID, and approved scope:
+
+1. Open **Developer → My App** on Dream MS and register your app/bot.
+2. Use the app's authorization flow to approve `characters:read` and/or
+   `content:read` for the Discord account you want to query.
+3. Configure the same account's Discord ID with `DREAM_DISCORD_ID`, then run
+   the MCP with your Dream MS API key.
+4. Restart the MCP client and call `get_account` or `get_content`.
+
+The API returns `404 No authorized data` when the Discord account has not
+authorized the registered app for the requested scope. See the [Dream MS API
+docs](https://dreamms.gg/api/docs) for current app registration requirements.
+
 ## Configure an MCP client
 
 Replace `C:/path/to/dreamms-mcp` with the absolute path to your clone. Supply
