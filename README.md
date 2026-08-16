@@ -1,25 +1,46 @@
-# DreamMS MCP
+<div align="center">
+  <img src="https://dreamms.gg/assets/img/logo-360.webp?v=1" alt="Dream MS logo" width="360">
+  <p><strong>This MCP is unofficial and is not affiliated with, endorsed by, or maintained by Dream MS or its server staff.</strong></p>
+  <h1>DreamMS MCP</h1>
+  <p>A read-only bridge between MCP-compatible coding agents and the Dream MS Stats API.</p>
+  <p>
+    <a href="#getting-started">Get started</a> ·
+    <a href="docs/installation.md">Manual installation</a> ·
+    <a href="https://dreamms.gg/api/docs">API reference</a> ·
+    <a href="https://github.com/roych98/dreamms-mcp/issues">Report an issue</a>
+  </p>
+  <p>
+    <img src="https://img.shields.io/badge/Python-3.11%2B-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python 3.11 or newer">
+    <img src="https://img.shields.io/badge/MCP-read--only-7C3AED?style=for-the-badge" alt="Read-only MCP server">
+    <img src="https://img.shields.io/badge/uv-powered-6C47FF?style=for-the-badge" alt="Powered by uv">
+    <img src="https://img.shields.io/badge/license-MIT-22C55E?style=for-the-badge" alt="MIT license">
+  </p>
+</div>
 
-An MCP server for reading Dream MS player, economy, ranking, event, expedition, population, changelog, and authorized-account data from the [Dream MS Stats API](https://dreamms.gg/api/docs).
+<details>
+<summary>📚 Table of contents</summary>
 
-DreamMS MCP is designed for MCP-compatible clients such as Claude Desktop, Cursor, and VS Code-style agent clients. It is read-only: an assistant can query published statistics through MCP, but this project does not modify game accounts, submit trades, or perform game actions.
+- [Why DreamMS MCP?](#-why-dreamms-mcp)
+- [How it works](#-how-it-works)
+- [Security model: bring your own key](#-security-model-bring-your-own-key)
+- [Getting started](#-getting-started)
+- [Manual installation](docs/installation.md)
+- [Available tools](#-available-tools)
+- [Local development and testing](#️-local-development-and-testing)
+- [Troubleshooting and rate limits](#-troubleshooting-and-rate-limits)
+- [Contributing](#-contributing)
+- [License](#-license)
 
-> **Project status:** This project is a local, read-only MCP server. It calls Dream MS directly with the API key supplied to the local process and does not proxy credentials through a hosted service.
+</details>
 
-## Contents
+## ✨ Why DreamMS MCP?
 
-- [How it works](#how-it-works)
-- [Security model: bring your own key](#security-model-bring-your-own-key)
-- [Installation and setup](#installation-and-setup)
-- [MCP client configuration](#mcp-client-configuration)
-- [Codex setup](#codex-setup)
-- [Available tools](#available-tools)
-- [Local development and testing](#local-development-and-testing)
-- [Troubleshooting and rate limits](#troubleshooting-and-rate-limits)
-- [Contributing](#contributing)
-- [License](#license)
+- **Ask your coding agent about the game economy.** Query item prices, player data, rankings, events, expeditions, population, and changelog data in natural language.
+- **Keep it local.** The server calls Dream MS directly from your machine and never proxies your API key through a hosted service.
+- **Stay read-only.** It can inspect published statistics, but it cannot modify accounts, submit trades, or perform game actions.
+- **Configure in minutes.** The Textual setup wizard supports Codex, Claude Code, OpenCode, and Pi with user- or project-scoped configuration.
 
-## How it works
+## ✨ How it works
 
 The MCP server translates tool calls into authenticated `GET` requests to the Dream MS Stats API v1:
 
@@ -31,7 +52,7 @@ The server should pass the caller's `DREAM_API_KEY` using the recommended `X-API
 
 API reference: [dreamms.gg/api/docs](https://dreamms.gg/api/docs).
 
-## Security model: bring your own key
+## 🔐 Security model: bring your own key
 
 DreamMS MCP uses a BYOK model. You obtain a personal API key from Dream MS Account Settings and provide it to the local MCP process through the `DREAM_API_KEY` environment variable.
 
@@ -43,158 +64,43 @@ DreamMS MCP uses a BYOK model. You obtain a personal API key from Dream MS Accou
 
 Dream MS currently limits key creation. If you cannot create one, follow the access instructions in the [official API documentation](https://dreamms.gg/api/docs).
 
-## Installation and setup
+## 🚀 Getting started
 
-### Prerequisites
+The setup wizard is the recommended way to configure DreamMS MCP locally. For
+manual installation and client-specific configuration, see
+[docs/installation.md](docs/installation.md).
 
-- Python 3.11 or newer (use the version declared by the project's `pyproject.toml` when it is available).
-- [`uv`](https://docs.astral.sh/uv/).
-- A Dream MS API key.
-- An MCP client that supports local stdio servers.
-
-### Install with uv
-
-From a clone of the repository:
+From the repository root:
 
 ```bash
-git clone https://github.com/roych98/dreamms-mcp.git
-cd dreamms-mcp
 uv sync
+uv run dreamms-setup
 ```
 
-Set the key in the environment used to launch the MCP server:
+### Setup wizard
 
-```bash
-# macOS / Linux
-export DREAM_API_KEY="your-dream-ms-api-key"
+The wizard accepts a Dream MS API key, stores it in the local user environment,
+adds or updates the selected client's MCP configuration, and can test the
+connection against Dream MS. The key is never written to a client
+configuration file.
 
-# Windows PowerShell
-$env:DREAM_API_KEY = "your-dream-ms-api-key"
+Run it from the clone you want the selected client to use. If the terminal is
+short, the wizard scrolls its panel. Use `Esc`, `Ctrl+Q`, or `Ctrl+C` to
+exit at any time.
 
-# Windows cmd.exe
-set DREAM_API_KEY=your-dream-ms-api-key
-```
+Choose a coding agent and scope in the wizard:
 
-Do not paste the real key into the client configuration's `args` array. Pass it through `env` as shown below.
+- **User** makes the server available across projects.
+- **Project** writes the configuration into the repository where the wizard was
+  launched.
 
-## MCP client configuration
+Supported clients are Codex, Claude Code, OpenCode, and Pi. Pi requires an
+MCP-capable adapter or extension, such as
+[`pi-mcp-adapter`](https://pi.dev/packages/pi-mcp-adapter).
 
-The examples use a repository-local launch through `uv` so the client uses the project's locked environment. Replace the path with the absolute path to your clone. The `DREAM_API_KEY` value must be supplied by your local secret-management approach.
+Restart the selected client after the wizard finishes so it reloads the MCP.
 
-### Claude Desktop
-
-Add the server under `mcpServers` in Claude Desktop's configuration file:
-
-```json
-{
-  "mcpServers": {
-    "dreamms": {
-      "command": "uv",
-      "args": [
-        "--directory",
-        "C:/path/to/dreamms-mcp",
-        "run",
-        "dreamms-mcp"
-      ],
-      "env": {
-        "DREAM_API_KEY": "YOUR_API_KEY"
-      }
-    }
-  }
-}
-```
-
-### Cursor
-
-In Cursor's MCP configuration, use the same stdio server definition:
-
-```json
-{
-  "mcpServers": {
-    "dreamms": {
-      "command": "uv",
-      "args": [
-        "--directory",
-        "C:/path/to/dreamms-mcp",
-        "run",
-        "dreamms-mcp"
-      ],
-      "env": {
-        "DREAM_API_KEY": "YOUR_API_KEY"
-      }
-    }
-  }
-}
-```
-
-### VS Code-style MCP JSON
-
-For clients that use a `.vscode/mcp.json`-style file:
-
-```json
-{
-  "servers": {
-    "dreamms": {
-      "type": "stdio",
-      "command": "uv",
-      "args": [
-        "--directory",
-        "C:/path/to/dreamms-mcp",
-        "run",
-        "dreamms-mcp"
-      ],
-      "env": {
-        "DREAM_API_KEY": "YOUR_API_KEY"
-      }
-    }
-  }
-}
-```
-
-Restart or reload the client after saving its configuration, then ask it to list the available DreamMS tools. If the client cannot start the process, first run the equivalent `uv` command from a terminal.
-
-## Codex setup
-
-Codex uses TOML configuration for local stdio MCP servers. The configuration is shared by Codex CLI and the Codex IDE extension. You can configure DreamMS globally in `~/.codex/config.toml`, or in a trusted project with `.codex/config.toml`.
-
-First make the API key available in the environment used to launch Codex:
-
-```bash
-# macOS / Linux
-export DREAM_API_KEY="your-dream-ms-api-key"
-
-# Windows PowerShell
-$env:DREAM_API_KEY = "your-dream-ms-api-key"
-```
-
-Then add this block to `config.toml`, replacing the path with the absolute path to your clone:
-
-```toml
-[mcp_servers.dreamms]
-command = "uv"
-args = ["--directory", "C:/path/to/dreamms-mcp", "run", "dreamms-mcp"]
-env_vars = ["DREAM_API_KEY"]
-enabled = true
-```
-
-`env_vars` tells Codex to inherit the key from your local environment without placing the secret in the TOML file. If you prefer to let Codex write the basic stdio entry, run:
-
-```bash
-codex mcp add dreamms -- uv --directory /path/to/dreamms-mcp run dreamms-mcp
-```
-
-Then add `env_vars = ["DREAM_API_KEY"]` under `[mcp_servers.dreamms]` in `~/.codex/config.toml`.
-
-Verify the connection with:
-
-```bash
-codex mcp list
-codex mcp get dreamms
-```
-
-Restart Codex after editing the configuration. In the Codex TUI, use `/mcp` to view active servers. For the current Codex configuration and MCP options, see the [official OpenAI MCP guide](https://developers.openai.com/codex/mcp/).
-
-## Available tools
+## 🧰 Available tools
 
 The MCP tool names mirror the API resources below. All tools are read-only and return the corresponding JSON data. Required parameters are marked **required**.
 
@@ -213,7 +119,7 @@ The MCP tool names mirror the API resources below. All tools are read-only and r
 
 `get_account` and `get_content` are app endpoints. They do not reveal arbitrary account data: the player must have authorized the registered Dream MS app for the required scope. See the [API docs](https://dreamms.gg/api/docs) for the current event IDs and job IDs.
 
-## Local development and testing
+## 🛠️ Local development and testing
 
 The development workflow uses `uv` to keep dependencies and commands reproducible:
 
@@ -240,7 +146,7 @@ curl.exe https://dreamms.gg/api/v1/usage `
 
 The console-script entry point and `python -m dreamms_mcp` both launch the same stdio server.
 
-## Troubleshooting and rate limits
+## 🧭 Troubleshooting and rate limits
 
 ### The client says the server exited
 
@@ -269,7 +175,7 @@ On `429`, respect the API's `Retry-After` response and back off. Avoid asking an
 
 `400` means a parameter is missing or invalid, `404` means no matching record, `405` means the method is not supported, and `503` means the backend is temporarily unavailable. Check the tool parameter spelling and allowed values before retrying.
 
-## Contributing
+## 🤝 Contributing
 
 Contributions are welcome. Before opening a pull request:
 
@@ -281,7 +187,7 @@ Contributions are welcome. Before opening a pull request:
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) when the project-specific contribution guide is added.
 
-## License
+## 📄 License
 
 MIT License
 
