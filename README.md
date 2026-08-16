@@ -1,5 +1,7 @@
 <div align="center">
-  <img src="https://dreamms.gg/assets/img/logo-360.webp?v=1" alt="Dream MS logo" width="360">
+  <a href="https://dreamms.gg/">
+    <img src="https://dreamms.gg/assets/img/logo-360.webp?v=1" alt="Dream MS logo" width="360">
+  </a>
   <p><strong>This MCP is unofficial and is not affiliated with, endorsed by, or maintained by Dream MS or its server staff.</strong></p>
   <h1>DreamMS MCP</h1>
   <p>A read-only bridge between MCP-compatible coding agents and the Dream MS Stats API.</p>
@@ -18,29 +20,29 @@
 </div>
 
 <details>
-<summary>📚 Table of contents</summary>
+<summary>Table of contents</summary>
 
-- [Why DreamMS MCP?](#-why-dreamms-mcp)
-- [How it works](#-how-it-works)
-- [Security model: bring your own key](#-security-model-bring-your-own-key)
-- [Getting started](#-getting-started)
+- [Why DreamMS MCP?](#why-dreamms-mcp)
+- [How it works](#how-it-works)
+- [Security model: bring your own key](#security-model-bring-your-own-key)
+- [Getting started](#getting-started)
 - [Manual installation](docs/installation.md)
-- [Available tools](#-available-tools)
-- [Local development and testing](#️-local-development-and-testing)
-- [Troubleshooting and rate limits](#-troubleshooting-and-rate-limits)
-- [Contributing](#-contributing)
-- [License](#-license)
+- [Available tools](#available-tools)
+- [Local development and testing](#local-development-and-testing)
+- [Troubleshooting and rate limits](#troubleshooting-and-rate-limits)
+- [Contributing](#contributing)
+- [License](#license)
 
 </details>
 
-## ✨ Why DreamMS MCP?
+## Why DreamMS MCP?
 
 - **Ask your coding agent about the game economy.** Query item prices, player data, rankings, events, expeditions, population, and changelog data in natural language.
 - **Keep it local.** The server calls Dream MS directly from your machine and never proxies your API key through a hosted service.
 - **Stay read-only.** It can inspect published statistics, but it cannot modify accounts, submit trades, or perform game actions.
 - **Configure in minutes.** The Textual setup wizard supports Codex, Claude Code, OpenCode, and Pi with user- or project-scoped configuration.
 
-## ✨ How it works
+## How it works
 
 The MCP server translates tool calls into authenticated `GET` requests to the Dream MS Stats API v1:
 
@@ -52,7 +54,7 @@ The server should pass the caller's `DREAM_API_KEY` using the recommended `X-API
 
 API reference: [dreamms.gg/api/docs](https://dreamms.gg/api/docs).
 
-## 🔐 Security model: bring your own key
+## Security model: bring your own key
 
 DreamMS MCP uses a BYOK model. You obtain a personal API key from Dream MS Account Settings and provide it to the local MCP process through the `DREAM_API_KEY` environment variable.
 
@@ -64,7 +66,7 @@ DreamMS MCP uses a BYOK model. You obtain a personal API key from Dream MS Accou
 
 Dream MS currently limits key creation. If you cannot create one, follow the access instructions in the [official API documentation](https://dreamms.gg/api/docs).
 
-## 🚀 Getting started
+## Getting started
 
 The setup wizard is the recommended way to configure DreamMS MCP locally. For
 manual installation and client-specific configuration, see
@@ -100,7 +102,7 @@ MCP-capable adapter or extension, such as
 
 Restart the selected client after the wizard finishes so it reloads the MCP.
 
-## 🧰 Available tools
+## Available tools
 
 The MCP tool names mirror the API resources below. All tools are read-only and return the corresponding JSON data. Required parameters are marked **required**.
 
@@ -119,7 +121,7 @@ The MCP tool names mirror the API resources below. All tools are read-only and r
 
 `get_account` and `get_content` are app endpoints. They do not reveal arbitrary account data: the player must have authorized the registered Dream MS app for the required scope. See the [API docs](https://dreamms.gg/api/docs) for the current event IDs and job IDs.
 
-## 🛠️ Local development and testing
+## Local development and testing
 
 The development workflow uses `uv` to keep dependencies and commands reproducible:
 
@@ -146,7 +148,7 @@ curl.exe https://dreamms.gg/api/v1/usage `
 
 The console-script entry point and `python -m dreamms_mcp` both launch the same stdio server.
 
-## 🧭 Troubleshooting and rate limits
+## Troubleshooting and rate limits
 
 ### The client says the server exited
 
@@ -175,7 +177,7 @@ On `429`, respect the API's `Retry-After` response and back off. Avoid asking an
 
 `400` means a parameter is missing or invalid, `404` means no matching record, `405` means the method is not supported, and `503` means the backend is temporarily unavailable. Check the tool parameter spelling and allowed values before retrying.
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome. Before opening a pull request:
 
@@ -187,7 +189,7 @@ Contributions are welcome. Before opening a pull request:
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) when the project-specific contribution guide is added.
 
-## 📄 License
+## License
 
 MIT License
 
