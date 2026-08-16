@@ -12,6 +12,7 @@ DreamMS MCP is designed for MCP-compatible clients such as Claude Desktop, Curso
 - [Security model: bring your own key](#security-model-bring-your-own-key)
 - [Installation and setup](#installation-and-setup)
 - [MCP client configuration](#mcp-client-configuration)
+- [Codex setup](#codex-setup)
 - [Available tools](#available-tools)
 - [Local development and testing](#local-development-and-testing)
 - [Troubleshooting and rate limits](#troubleshooting-and-rate-limits)
@@ -151,6 +152,47 @@ For clients that use a `.vscode/mcp.json`-style file:
 ```
 
 Restart or reload the client after saving its configuration, then ask it to list the available DreamMS tools. If the client cannot start the process, first run the equivalent `uv` command from a terminal.
+
+## Codex setup
+
+Codex uses TOML configuration for local stdio MCP servers. The configuration is shared by Codex CLI and the Codex IDE extension. You can configure DreamMS globally in `~/.codex/config.toml`, or in a trusted project with `.codex/config.toml`.
+
+First make the API key available in the environment used to launch Codex:
+
+```bash
+# macOS / Linux
+export DREAM_API_KEY="your-dream-ms-api-key"
+
+# Windows PowerShell
+$env:DREAM_API_KEY = "your-dream-ms-api-key"
+```
+
+Then add this block to `config.toml`, replacing the path with the absolute path to your clone:
+
+```toml
+[mcp_servers.dreamms]
+command = "uv"
+args = ["--directory", "C:/path/to/dreamms-mcp", "run", "dreamms-mcp"]
+env_vars = ["DREAM_API_KEY"]
+enabled = true
+```
+
+`env_vars` tells Codex to inherit the key from your local environment without placing the secret in the TOML file. If you prefer to let Codex write the basic stdio entry, run:
+
+```bash
+codex mcp add dreamms -- uv --directory /path/to/dreamms-mcp run dreamms-mcp
+```
+
+Then add `env_vars = ["DREAM_API_KEY"]` under `[mcp_servers.dreamms]` in `~/.codex/config.toml`.
+
+Verify the connection with:
+
+```bash
+codex mcp list
+codex mcp get dreamms
+```
+
+Restart Codex after editing the configuration. In the Codex TUI, use `/mcp` to view active servers. For the current Codex configuration and MCP options, see the [official OpenAI MCP guide](https://developers.openai.com/codex/mcp/).
 
 ## Available tools
 
