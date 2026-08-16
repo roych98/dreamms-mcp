@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import ClassVar
 
 from textual.app import App, ComposeResult
-from textual.containers import Container, Horizontal
+from textual.containers import Container
 from textual.widgets import Button, Footer, Header, Input, Label, Select, Static
 
 from dreamms_mcp.client import DreamMSClient
@@ -17,12 +17,9 @@ from dreamms_mcp.validation import discord_id as validate_discord_id
 from .codex_config import write_config as write_codex_config
 from .constants import (
     API_KEY_ENV,
-    CLIENT_LABELS,
     CLIENT_NOTES,
     DISCORD_ID_ENV,
     SCOPE_LABELS,
-    SUPPORTED_CLIENTS,
-    SUPPORTED_SCOPES,
 )
 from .credentials import (
     current_or_persisted_discord_id,
@@ -31,6 +28,7 @@ from .credentials import (
     persist_key,
 )
 from .json_config import write_config as write_json_config
+from .layout import compose_body
 from .paths import client_config_path, client_label
 from .styles import CSS
 
@@ -50,45 +48,7 @@ class SetupWizard(App[None]):
     def compose(self) -> ComposeResult:
         yield Header(show_clock=True)
         with Container(id="app"):
-            yield Static(
-                "This wizard configures the local DreamMS MCP for your coding agent. "
-                "Your API key is saved to your user environment and never to "
-                "client configuration files.",
-                id="intro",
-            )
-            yield Label("Dream MS API key", classes="field-label")
-            yield Input(
-                placeholder="Paste your key, or leave blank to keep the existing key",
-                password=True,
-                id="api-key",
-            )
-            yield Static(self._key_status(), id="hint")
-            yield Label("Discord ID (optional)", classes="field-label")
-            yield Input(
-                placeholder="Your numeric Discord user ID for app APIs",
-                id="discord-id",
-            )
-            yield Static(self._discord_id_status(), id="discord-hint")
-            yield Label("Coding agent", classes="field-label")
-            yield Select(
-                [(CLIENT_LABELS[client], client) for client in SUPPORTED_CLIENTS],
-                value="codex",
-                id="client",
-            )
-            yield Label("Scope", classes="field-label")
-            yield Select(
-                [(SCOPE_LABELS[scope], scope) for scope in SUPPORTED_SCOPES],
-                value="user",
-                id="scope",
-            )
-            with Horizontal(id="buttons"):
-                yield Button("Configure MCP", variant="primary", id="configure")
-                yield Button("Test connection", id="test")
-                yield Button("Quit", id="quit")
-            yield Label("Codex configuration", classes="field-label", id="client-label")
-            yield Static(str(self._initial_path()), id="config-path")
-            yield Static(CLIENT_NOTES["codex"], id="client-note")
-            yield Static("Ready.", id="status")
+            yield from compose_body(self)
         yield Footer()
 
     def _initial_path(self) -> Path:
@@ -121,6 +81,7 @@ class SetupWizard(App[None]):
                 f"{client_label(client)} configuration"
             )
             self.query_one("#client-note", Static).update(CLIENT_NOTES[client])
+            self.query_one("#detail-note", Static).update(CLIENT_NOTES[client])
         elif event.select.id != "scope":
             return
         self.query_one("#config-path", Static).update(str(self._selected_path()))
