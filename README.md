@@ -68,6 +68,10 @@ Dream MS currently limits key creation. If you cannot create one, follow the acc
 
 ## Getting started
 
+<p align="center">
+  <img src="https://d2b6stxjw39da.cloudfront.net/8ywmr%2Fpreview%2F80231362%2Fmain_large.gif?response-content-disposition=inline%3Bfilename%3D%22main_large.gif%22%3B&amp;response-content-type=image%2Fgif&amp;Expires=1786852965&amp;Signature=KhqT45kV2qUfInNtvXQnlWhhxrfeAOyUVWbh06GpJVBWWPmBaWh7TU6MmSCbyP6gelJRpH8dtjZJuY3jWSfjkCTp3Sy6SVBFfrcFvxCLgBSc4b-ik7OO9ttKuqmiaK3DemsAznXYtzwAV3AGUJhv0~8d0CmNdOl5WjXjLUaOvX3thUOQppCekXjUr1WARI0-q5czy9~ZrjdkqJwYxipSxykBOsAqBNHfNkRmDzbrIBOeYwqiEdnFvZBJSZzOff1I9lLyxH-NYxyLEgr4DnidSJ-UmDonBw3F1OsWdVTxMo9rg5ZMYwEY4Ha~ActQVkRiRiKsxu3PnvqXxI7GkOhvgA__&amp;Key-Pair-Id=APKAJT5WQLLEOADKLHBQ" alt="DreamMS setup wizard demo" width="900">
+</p>
+
 The setup wizard is the recommended way to configure DreamMS MCP locally. For
 manual installation and client-specific configuration, see
 [docs/installation.md](docs/installation.md).
