@@ -2,7 +2,7 @@
   <a href="https://dreamms.gg/">
     <img src="https://dreamms.gg/assets/img/logo-360.webp?v=1" alt="Dream MS logo" width="360">
   </a>
-  <p><strong>This MCP is unofficial and is not affiliated with, endorsed by, or maintained by Dream MS or its server staff.</strong></p>
+  <p><sub><strong>This MCP is unofficial and is not affiliated with, endorsed by, or maintained by Dream MS or its server staff.</strong></sub></p>
   <h1>DreamMS MCP</h1>
   <p>A read-only bridge between MCP-compatible coding agents and the Dream MS Stats API.</p>
   <p>
@@ -19,8 +19,7 @@
   </p>
 </div>
 
-<details>
-<summary>Table of contents</summary>
+## Table of contents
 
 - [Why DreamMS MCP?](#why-dreamms-mcp)
 - [How it works](#how-it-works)
@@ -32,8 +31,6 @@
 - [Troubleshooting and rate limits](#troubleshooting-and-rate-limits)
 - [Contributing](#contributing)
 - [License](#license)
-
-</details>
 
 ## Why DreamMS MCP?
 
