@@ -1,6 +1,7 @@
 """Shared setup wizard labels and configuration constants."""
 
 API_KEY_ENV = "DREAM_API_KEY"
+DISCORD_ID_ENV = "DREAM_DISCORD_ID"
 SUPPORTED_CLIENTS = ("codex", "claude", "opencode", "pi")
 SUPPORTED_SCOPES = ("user", "project")
 
@@ -17,8 +18,8 @@ SCOPE_LABELS = {
 }
 
 CLIENT_NOTES = {
-    "codex": "Codex reads the environment variable through env_vars.",
-    "claude": "Claude Code reads the environment variable through ${DREAM_API_KEY}.",
-    "opencode": "OpenCode reads the environment variable through {env:DREAM_API_KEY}.",
+    "codex": "Codex reads both values through env_vars.",
+    "claude": "Claude Code reads both values through ${DREAM_API_KEY} and ${DREAM_DISCORD_ID}.",
+    "opencode": "OpenCode reads both values through {env:DREAM_API_KEY} and {env:DREAM_DISCORD_ID}.",
     "pi": "Pi MCP support requires pi-mcp-adapter or another compatible MCP extension.",
 }

@@ -21,7 +21,7 @@ def render_mcp_block(project_dir: Path) -> str:
             "[mcp_servers.dreamms]",
             'command = "uv"',
             f'args = ["--directory", {project_path}, "run", "dreamms-mcp"]',
-            'env_vars = ["DREAM_API_KEY"]',
+            'env_vars = ["DREAM_API_KEY", "DREAM_DISCORD_ID"]',
             "enabled = true",
         ]
     )

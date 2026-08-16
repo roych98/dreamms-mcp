@@ -9,6 +9,7 @@ wizard. The wizard is the recommended path for local setup; see the
 - Python 3.11 or newer.
 - [`uv`](https://docs.astral.sh/uv/).
 - A Dream MS API key.
+- Your Discord user ID if you plan to use app-authenticated account/content APIs.
 - An MCP client that supports local stdio servers.
 
 ## Install the project
@@ -41,6 +42,23 @@ set DREAM_API_KEY=your-dream-ms-api-key
 For a persistent Windows setup, save `DREAM_API_KEY` as a User Environment
 Variable and restart the MCP client afterward.
 
+### Optional Discord ID
+
+Set `DREAM_DISCORD_ID` to make your Discord user ID the default for
+`get_account` and `get_content`. Tool calls may still provide an explicit
+`discord_id`.
+
+```bash
+# macOS / Linux
+export DREAM_DISCORD_ID="your-discord-user-id"
+
+# Windows PowerShell
+$env:DREAM_DISCORD_ID = "your-discord-user-id"
+
+# Windows cmd.exe
+set DREAM_DISCORD_ID=your-discord-user-id
+```
+
 ## Configure an MCP client
 
 Replace `C:/path/to/dreamms-mcp` with the absolute path to your clone. Supply
@@ -57,7 +75,10 @@ Add the server under `mcpServers` in Claude Desktop's configuration file:
     "dreamms": {
       "command": "uv",
       "args": ["--directory", "C:/path/to/dreamms-mcp", "run", "dreamms-mcp"],
-      "env": {"DREAM_API_KEY": "YOUR_API_KEY"}
+      "env": {
+        "DREAM_API_KEY": "${DREAM_API_KEY}",
+        "DREAM_DISCORD_ID": "${DREAM_DISCORD_ID}"
+      }
     }
   }
 }
@@ -73,7 +94,10 @@ Use the same stdio server definition in Cursor's MCP configuration:
     "dreamms": {
       "command": "uv",
       "args": ["--directory", "C:/path/to/dreamms-mcp", "run", "dreamms-mcp"],
-      "env": {"DREAM_API_KEY": "YOUR_API_KEY"}
+      "env": {
+        "DREAM_API_KEY": "${DREAM_API_KEY}",
+        "DREAM_DISCORD_ID": "${DREAM_DISCORD_ID}"
+      }
     }
   }
 }
@@ -90,7 +114,10 @@ For clients using a `.vscode/mcp.json`-style file:
       "type": "stdio",
       "command": "uv",
       "args": ["--directory", "C:/path/to/dreamms-mcp", "run", "dreamms-mcp"],
-      "env": {"DREAM_API_KEY": "YOUR_API_KEY"}
+      "env": {
+        "DREAM_API_KEY": "${DREAM_API_KEY}",
+        "DREAM_DISCORD_ID": "${DREAM_DISCORD_ID}"
+      }
     }
   }
 }
@@ -106,12 +133,12 @@ for project scope:
 [mcp_servers.dreamms]
 command = "uv"
 args = ["--directory", "C:/path/to/dreamms-mcp", "run", "dreamms-mcp"]
-env_vars = ["DREAM_API_KEY"]
+env_vars = ["DREAM_API_KEY", "DREAM_DISCORD_ID"]
 enabled = true
 ```
 
 Alternatively, let Codex create the basic entry, then add
-`env_vars = ["DREAM_API_KEY"]`:
+`env_vars = ["DREAM_API_KEY", "DREAM_DISCORD_ID"]`:
 
 ```bash
 codex mcp add dreamms -- uv --directory /path/to/dreamms-mcp run dreamms-mcp
@@ -139,5 +166,7 @@ curl.exe https://dreamms.gg/api/v1/usage `
 
 If the client says the server exited, confirm that `uv sync` completed, the
 configured directory is correct, and `DREAM_API_KEY` is present in the client
-process environment. The API requires a valid key and returns `401` when it is
-missing or invalid. Restart the client after changing environment variables.
+process environment. If using app-authenticated tools without an explicit ID,
+also confirm `DREAM_DISCORD_ID` is present. The API requires a valid key and
+returns `401` when it is missing or invalid. Restart the client after changing
+environment variables.

@@ -60,6 +60,9 @@ DreamMS MCP uses a BYOK model. You obtain a personal API key from Dream MS Accou
 - Use one key per person. Dream MS documents that using multiple keys can revoke all access.
 - The API key is sent only to `https://dreamms.gg` by the MCP server; this project does not proxy it through a third-party service.
 - Rotate or revoke the key through Dream MS if it is exposed.
+- For app-authenticated endpoints, optionally configure your Discord user ID in
+  `DREAM_DISCORD_ID`. This ID is not a secret and is only used as the default
+  for account/content lookups when a tool call does not provide one.
 
 Dream MS currently limits key creation. If you cannot create one, follow the access instructions in the [official API documentation](https://dreamms.gg/api/docs).
 
@@ -78,10 +81,10 @@ uv run dreamms-setup
 
 ### Setup wizard
 
-The wizard accepts a Dream MS API key, stores it in the local user environment,
-adds or updates the selected client's MCP configuration, and can test the
-connection against Dream MS. The key is never written to a client
-configuration file.
+The wizard accepts a Dream MS API key and an optional Discord user ID, stores
+them in the local user environment, adds or updates the selected client's MCP
+configuration, and can test the connection against Dream MS. Neither value is
+written directly to a client configuration file.
 
 Run it from the clone you want the selected client to use. If the terminal is
 short, the wizard scrolls its panel. Use `Esc`, `Ctrl+Q`, or `Ctrl+C` to
@@ -113,8 +116,8 @@ The MCP tool names mirror the API resources below. All tools are read-only and r
 | `get_event` | `GET /api/v1/event` | `event` (**required**, documented event ID); `type` (optional: `jq` or `pq`; otherwise the event's default) |
 | `get_population` | `GET /api/v1/population` | None |
 | `get_changelog` | `GET /api/v1/changelog` | `count` (optional, default `5`, maximum `20`); `format` (optional: `html` or `text`; default `html`) |
-| `get_account` | `GET /api/v1/account` | `discord_id` (**required**); requires a registered app and `characters:read` authorization scope |
-| `get_content` | `GET /api/v1/content` | `discord_id` (**required**); requires a registered app and `content:read` authorization scope |
+| `get_account` | `GET /api/v1/account` | `discord_id` (optional when `DREAM_DISCORD_ID` is configured); requires a registered app and `characters:read` authorization scope |
+| `get_content` | `GET /api/v1/content` | `discord_id` (optional when `DREAM_DISCORD_ID` is configured); requires a registered app and `content:read` authorization scope |
 
 `get_account` and `get_content` are app endpoints. They do not reveal arbitrary account data: the player must have authorized the registered Dream MS app for the required scope. See the [API docs](https://dreamms.gg/api/docs) for the current event IDs and job IDs.
 
@@ -149,7 +152,7 @@ The console-script entry point and `python -m dreamms_mcp` both launch the same 
 
 ### The client says the server exited
 
-Run the configured command manually from the repository directory. Confirm that `uv sync` completed, that the module/entry point exists, and that `DREAM_API_KEY` is present in the process environment. Do not test by putting the key on a command line where it may be captured in shell history.
+Run the configured command manually from the repository directory. Confirm that `uv sync` completed, that the module/entry point exists, and that `DREAM_API_KEY` is present in the process environment. If using app-authenticated tools without an explicit `discord_id`, also confirm `DREAM_DISCORD_ID` is present. Do not test by putting the key on a command line where it may be captured in shell history.
 
 ### Authentication fails
 
@@ -212,4 +215,4 @@ SOFTWARE.
 
 ## Summary
 
-DreamMS MCP gives MCP clients a small, read-only interface to Dream MS statistics. Install the project with `uv`, provide your own `DREAM_API_KEY` to the local server process, configure the client for stdio, and use the documented tools for player, economy, rankings, events, expeditions, population, changelog, usage, and authorized app data.
+DreamMS MCP gives MCP clients a small, read-only interface to Dream MS statistics. Install the project with `uv`, provide your own `DREAM_API_KEY` to the local server process, optionally configure `DREAM_DISCORD_ID` for app-authenticated lookups, configure the client for stdio, and use the documented tools for player, economy, rankings, events, expeditions, population, changelog, usage, and authorized app data.

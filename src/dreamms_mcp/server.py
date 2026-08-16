@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+from os import getenv
 from typing import Any, Literal
 
 from mcp.server import MCPServer
@@ -168,22 +169,22 @@ async def get_changelog(count: int = 5, format: ChangelogFormat = "html") -> Any
 
 
 @mcp.tool()
-async def get_account(discord_id: str) -> Any:
+async def get_account(discord_id: str | None = None) -> Any:
     """Return authorized account character information for a Discord user."""
 
     try:
-        discord_id = validate_discord_id(discord_id)
+        discord_id = validate_discord_id(discord_id or getenv("DREAM_DISCORD_ID", ""))
     except DreamMSError as exc:
         return _error_result(exc)
     return await _safe_request("/api/v1/account", discord_id=discord_id)
 
 
 @mcp.tool()
-async def get_content(discord_id: str) -> Any:
+async def get_content(discord_id: str | None = None) -> Any:
     """Return authorized account content information for a Discord user."""
 
     try:
-        discord_id = validate_discord_id(discord_id)
+        discord_id = validate_discord_id(discord_id or getenv("DREAM_DISCORD_ID", ""))
     except DreamMSError as exc:
         return _error_result(exc)
     return await _safe_request("/api/v1/content", discord_id=discord_id)

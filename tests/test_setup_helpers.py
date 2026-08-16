@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from dreamms_setup import codex_config, json_config
+from dreamms_setup import codex_config, credentials, json_config
 from dreamms_setup.paths import client_config_path
 
 
@@ -12,8 +12,21 @@ def test_render_codex_block_uses_secret_free_env_reference(tmp_path: Path):
 
     assert "mcp_servers.dreamms" in block
     assert "DREAM_API_KEY" in block
+    assert "DREAM_DISCORD_ID" in block
     assert "api-key" not in block
     assert str(tmp_path).replace("\\", "/") in block
+
+
+def test_unix_environment_block_preserves_both_setup_values(
+    tmp_path: Path, monkeypatch
+):
+    monkeypatch.setattr(credentials.Path, "home", lambda: tmp_path)
+    credentials._write_unix_value("DREAM_API_KEY", "key")
+    credentials._write_unix_value("DREAM_DISCORD_ID", "123456789")
+
+    profile = (tmp_path / ".profile").read_text(encoding="utf-8")
+    assert "export DREAM_API_KEY=key" in profile
+    assert "export DREAM_DISCORD_ID=123456789" in profile
 
 
 def test_insert_codex_block_preserves_existing_config(tmp_path: Path):
@@ -78,9 +91,17 @@ def test_render_json_servers_use_environment_references(tmp_path: Path):
     opencode = json_config.render_server("opencode", tmp_path)
     pi = json_config.render_server("pi", tmp_path)
 
-    assert claude["env"] == {"DREAM_API_KEY": "${DREAM_API_KEY}"}
-    assert opencode["environment"] == {"DREAM_API_KEY": "{env:DREAM_API_KEY}"}
-    assert pi["env"] == {"DREAM_API_KEY": "${DREAM_API_KEY}"}
+    expected_claude = {
+        "DREAM_API_KEY": "${DREAM_API_KEY}",
+        "DREAM_DISCORD_ID": "${DREAM_DISCORD_ID}",
+    }
+    expected_opencode = {
+        "DREAM_API_KEY": "{env:DREAM_API_KEY}",
+        "DREAM_DISCORD_ID": "{env:DREAM_DISCORD_ID}",
+    }
+    assert claude["env"] == expected_claude
+    assert opencode["environment"] == expected_opencode
+    assert pi["env"] == expected_claude
     assert "secret" not in json.dumps([claude, opencode, pi])
 
 
@@ -118,5 +139,6 @@ def test_write_opencode_jsonc_config(tmp_path: Path, monkeypatch):
 
     assert data["model"] == "test"
     assert data["mcp"]["servers"]["dreamms"]["environment"] == {
-        "DREAM_API_KEY": "{env:DREAM_API_KEY}"
+        "DREAM_API_KEY": "{env:DREAM_API_KEY}",
+        "DREAM_DISCORD_ID": "{env:DREAM_DISCORD_ID}",
     }

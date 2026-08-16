@@ -103,6 +103,23 @@ def test_tool_parameter_mapping(
     assert seen == {"path": path, "params": params}
 
 
+@pytest.mark.parametrize("function_name", ["get_account", "get_content"])
+def test_app_endpoint_uses_configured_discord_id(
+    monkeypatch, server_module, function_name
+):
+    seen = {}
+    monkeypatch.setenv("DREAM_DISCORD_ID", "123456789012345678")
+
+    async def fake_request(request_path, **request_params):
+        seen["path"] = request_path
+        seen["params"] = request_params
+        return {"ok": True}
+
+    monkeypatch.setattr(server_module, "_request", fake_request)
+    assert call(getattr(server_module, function_name)()) == {"ok": True}
+    assert seen["params"] == {"discord_id": "123456789012345678"}
+
+
 @pytest.mark.parametrize(
     ("function_name", "kwargs", "message"),
     [

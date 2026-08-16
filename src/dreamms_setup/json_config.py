@@ -6,7 +6,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-from .constants import API_KEY_ENV
+from .constants import API_KEY_ENV, DISCORD_ID_ENV
 from .files import write_config_text
 
 
@@ -15,24 +15,32 @@ def render_server(client: str, project_dir: Path) -> dict[str, Any]:
 
     path = project_dir.resolve().as_posix()
     command = ["uv", "--directory", path, "run", "dreamms-mcp"]
+    claude_env = {
+        API_KEY_ENV: "${DREAM_API_KEY}",
+        DISCORD_ID_ENV: "${DREAM_DISCORD_ID}",
+    }
+    opencode_env = {
+        API_KEY_ENV: "{env:DREAM_API_KEY}",
+        DISCORD_ID_ENV: "{env:DREAM_DISCORD_ID}",
+    }
     if client == "claude":
         return {
             "type": "stdio",
             "command": "uv",
             "args": command[1:],
-            "env": {API_KEY_ENV: "${DREAM_API_KEY}"},
+            "env": claude_env,
         }
     if client == "opencode":
         return {
             "type": "local",
             "command": command,
-            "environment": {API_KEY_ENV: "{env:DREAM_API_KEY}"},
+            "environment": opencode_env,
         }
     if client == "pi":
         return {
             "command": "uv",
             "args": command[1:],
-            "env": {API_KEY_ENV: "${DREAM_API_KEY}"},
+            "env": claude_env,
         }
     raise ValueError(f"Unsupported JSON client: {client}")
 
@@ -132,7 +140,9 @@ def write_config(config_path: Path, client: str, project_dir: Path) -> bool:
 
     if client not in {"claude", "opencode", "pi"}:
         raise ValueError(f"Unsupported JSON client: {client}")
-    previous = config_path.read_text(encoding="utf-8") if config_path.exists() else "{}\n"
+    previous = (
+        config_path.read_text(encoding="utf-8") if config_path.exists() else "{}\n"
+    )
     try:
         data = _parse(previous)
     except json.JSONDecodeError as exc:
